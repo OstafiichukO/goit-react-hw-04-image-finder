@@ -1,7 +1,6 @@
 import { Component } from 'react';
 import { StyledApp } from './App.styled';
 import ImageGallery from './ImageGallery';
-import '../index.css';
 import Searchbar from './Searchbar';
 
 export default class App extends Component {

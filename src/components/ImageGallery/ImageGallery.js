@@ -5,7 +5,7 @@ import ImageGalleryItem from './ImageGalleryItem';
 import Loader from 'components/Loader';
 import Modal from 'components/Modal';
 import Button from 'components/Button';
-import { StyledUl } from './ImageGallery.styled';
+import { StyledUl, StyledSpan, StyledImg } from './ImageGallery.styled';
 
 const STATUS = {
   IDLE: 'idle',
@@ -69,8 +69,68 @@ export default class ImageGallery extends Component {
     }
   }
 
+  handleLoadMore = page => {
+    this.setState({ page });
+  };
+
+  toggleMogal = () => {
+    const { isModal } = this.state;
+    this.setState({ idImage: +isModal });
+    this.toggleModal();
+  };
+
+  findImagebyID = () => {
+    const { images, idImage } = this.state;
+    if (idImage) {
+      return images.find(image => image.id === idImage);
+    }
+  };
+
   render() {
-    return <StyledUl class="gallery"></StyledUl>;
+    const { images, query, page, totalPages, status, error, isModal } =
+      this.state;
+    const { handleLoadMore, toggleModal, findID } = this;
+    const findedImage = this.findImagebyID();
+
+    if (status === 'idle') {
+      return <StyledSpan>Fill in the input field</StyledSpan>;
+    }
+    if (status === 'pending') {
+      return (
+        <>
+          <StyledUl>
+            <ImageGalleryItem images={images} alt={query} />
+          </StyledUl>
+          <Loader />
+        </>
+      );
+    }
+
+    if (status === 'resolver') {
+      return (
+        <>
+          <StyledUl>
+            <ImageGalleryItem images={images} alt={query} onClick={findID} />
+          </StyledUl>
+          {totalPages !== page ? (
+            <Button onClick={handleLoadMore} page={page} />
+          ) : (
+            <StyledSpan>
+              On request "{query}" all search results are shown
+            </StyledSpan>
+          )}
+          {isModal && (
+            <Modal onClose={toggleModal}>
+              <StyledImg src={findedImage.largeImageURL} alt={query} />
+            </Modal>
+          )}
+        </>
+      );
+    }
+
+    if (status === 'rejected') {
+      return <StyledSpan>{error.message}</StyledSpan>;
+    }
   }
 }
 

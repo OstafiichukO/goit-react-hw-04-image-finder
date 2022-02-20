@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import PropTypes from 'prop-types';
+import Search from '../../components/Icons';
 import {
   StyledHeader,
   StyledForm,
@@ -15,12 +16,15 @@ export default class Searchbar extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
-    this.props.onSubmit(this.state.inputValue);
+    const { onSubmit } = this.props;
+    const { inputValue } = this.state;
+    onSubmit(inputValue);
     this.setState({ inputValue: '' });
   };
 
   handleChange = event => {
-    this.setState({ inputValue: event.target.value });
+    const { value } = event.target;
+    this.setState({ inputValue: value });
   };
 
   render() {
@@ -30,16 +34,16 @@ export default class Searchbar extends Component {
       <StyledHeader>
         <StyledForm onSubmit={handlleSubmit}>
           <StyledButton type="submit">
-            <StyledSpan class="button-label">Search</StyledSpan>
+            <Search />
+            <StyledSpan>Search</StyledSpan>
           </StyledButton>
-
           <StyledInput
-            type="text"
-            autocomplete="off"
-            autofocus
-            placeholder="Search images and photos"
             onChange={handlleChange}
+            type="text"
             value={inputValue}
+            autoComplete="off"
+            autoFocus
+            placeholder="Search images and photos"
           />
         </StyledForm>
       </StyledHeader>
