@@ -1,5 +1,7 @@
 import { Component } from 'react';
+import { StyledApp } from './App.styled';
 import ImageGallery from './ImageGallery';
+import '../index.css';
 import Searchbar from './Searchbar';
 
 export default class App extends Component {
@@ -15,10 +17,10 @@ export default class App extends Component {
     const { query } = this.state;
     const handleSubmit = this;
     return (
-      <>
+      <StyledApp>
         <Searchbar onSubmit={handleSubmit} />
         <ImageGallery query={query} />
-      </>
+      </StyledApp>
     );
   }
 }

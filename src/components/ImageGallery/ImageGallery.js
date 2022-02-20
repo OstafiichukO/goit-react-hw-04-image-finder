@@ -1,9 +1,13 @@
 import { Component } from 'react';
-// import ImageItem from './ImageItem';
+import { StyledUl } from './ImageGallery.styled';
 
 export default class ImageGallery extends Component {
-  state = {};
+  state = {
+    query: '',
+    images: [],
+    error: null,
+  };
   render() {
-    return <>ImageGallery</>;
+    return <StyledUl class="gallery"></StyledUl>;
   }
 }
