@@ -5,10 +5,11 @@ const IMAGE_TYPE = 'image_type';
 const ORIENTATION = 'horizontal';
 const PER_PAGE = 12;
 
-const PixabayAPI = (query, page) => {
+const API = (query, page) => {
   const parameters = {
     key: KEY,
     query: query,
+    page: page,
     per_page: PER_PAGE,
     image_type: IMAGE_TYPE,
     orientation: ORIENTATION,
@@ -31,4 +32,4 @@ const PixabayAPI = (query, page) => {
       return Promise.reject(new Error(`No images found for "${query}"`));
     });
 };
-export default PixabayAPI;
+export default API;
