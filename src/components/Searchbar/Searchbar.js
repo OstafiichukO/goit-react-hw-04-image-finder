@@ -40,7 +40,7 @@ export default class Searchbar extends Component {
           <StyledInput
             onChange={handlleChange}
             type="text"
-            value={inputValue}
+            defaultValue={inputValue}
             autoComplete="off"
             autoFocus
             placeholder="Search images and photos"
