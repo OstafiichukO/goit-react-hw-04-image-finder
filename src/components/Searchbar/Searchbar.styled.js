@@ -32,7 +32,9 @@ export const StyledButton = styled.button`
   width: 48px;
   height: 48px;
   border: 0;
-  background-image: url('https://as1.ftcdn.net/v2/jpg/01/27/72/28/1000_F_127722883_DD4Sp3V30YxvYut3sRsaJqv7TKloEuyH.jpg');
+  ${
+    '' /* background-image: url('https://as1.ftcdn.net/v2/jpg/01/27/72/28/1000_F_127722883_DD4Sp3V30YxvYut3sRsaJqv7TKloEuyH.jpg'); */
+  }
   background-size: 100%;
   background-repeat: no-repeat;
   background-position: center;
