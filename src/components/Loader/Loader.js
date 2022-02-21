@@ -1,12 +1,16 @@
 import { Bars } from 'react-loader-spinner';
-import { StyledLoader } from './Loader.styled';
+import s from './Loader.module.css';
 
 const Loader = () => {
-  return (
-    <StyledLoader>
-      <Bars color="#20232a" height={40} width={40} />
-    </StyledLoader>
-  );
+    return (
+        <div className={s.loader}>
+            <Bars
+                color="#00BFFF"
+                height={40}
+                width={40} 
+            />
+        </div>
+    );
 };
 
 export default Loader;

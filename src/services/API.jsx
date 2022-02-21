@@ -5,20 +5,18 @@ const IMAGE_TYPE = 'image_type';
 const ORIENTATION = 'horizontal';
 const PER_PAGE = 12;
 
-const API = (query, page) => {
-  const parameters = {
-    key: KEY,
-    query: query,
+const PixabayAPI = (query, page) => {
+  const params = {
+    q: query,
     page: page,
-    per_page: PER_PAGE,
+    key: KEY,
     image_type: IMAGE_TYPE,
     orientation: ORIENTATION,
+    per_page: PER_PAGE,
   };
 
   return axios
-    .get('https://pixabay.com/api/', {
-      parameters: { ...parameters },
-    })
+    .get('https://pixabay.com/api/', { params: { ...params } })
     .then(response => {
       if (response.data.totalHits) {
         return {
@@ -29,7 +27,9 @@ const API = (query, page) => {
           }),
         };
       }
+
       return Promise.reject(new Error(`No images found for "${query}"`));
     });
 };
-export default API;
+
+export default PixabayAPI;

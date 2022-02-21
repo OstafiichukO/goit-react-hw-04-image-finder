@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import PropTypes from 'prop-types';
-import Search from '../../components/Icons';
+import Search from '../Icons';
 import {
   StyledHeader,
   StyledForm,
@@ -14,7 +14,7 @@ export default class Searchbar extends Component {
     inputValue: '',
   };
 
-  handleSubmit = event => {
+  handlerSubmit = event => {
     event.preventDefault();
     const { onSubmit } = this.props;
     const { inputValue } = this.state;
@@ -22,31 +22,33 @@ export default class Searchbar extends Component {
     this.setState({ inputValue: '' });
   };
 
-  handleChange = event => {
+  handlerChange = event => {
     const { value } = event.target;
     this.setState({ inputValue: value });
   };
 
   render() {
     const { inputValue } = this.state;
-    const { handlleChange, handlleSubmit } = this;
+    const { handlerChange, handlerSubmit } = this;
     return (
-      <StyledHeader>
-        <StyledForm onSubmit={handlleSubmit}>
-          <StyledButton type="submit">
-            <Search />
-            <StyledSpan>Search</StyledSpan>
-          </StyledButton>
-          <StyledInput
-            onChange={handlleChange}
-            type="text"
-            defaultValue={inputValue}
-            autoComplete="off"
-            autoFocus
-            placeholder="Search images and photos"
-          />
-        </StyledForm>
-      </StyledHeader>
+      <>
+        <StyledHeader>
+          <StyledForm onSubmit={handlerSubmit}>
+            <StyledButton type="submit">
+              <Search />
+              <StyledSpan>Search</StyledSpan>
+            </StyledButton>
+            <StyledInput
+              onChange={handlerChange}
+              type="text"
+              value={inputValue}
+              autoComplete="off"
+              autoFocus
+              placeholder="Search images and photos"
+            />
+          </StyledForm>
+        </StyledHeader>
+      </>
     );
   }
 }

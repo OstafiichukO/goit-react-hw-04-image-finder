@@ -1,10 +1,13 @@
 import { Component } from 'react';
 import PropTypes from 'prop-types';
-import API from 'services/API';
+
+import API from '../../services/API';
+
 import ImageGalleryItem from './ImageGalleryItem';
-import Loader from 'components/Loader';
-import Modal from 'components/Modal';
-import Button from 'components/Button';
+import Loader from '../Loader';
+import Modal from '../Modal';
+import Button from '../Button';
+
 import { StyledUl, StyledSpan, StyledImg } from './ImageGallery.styled';
 
 const STATUS = {
@@ -69,13 +72,18 @@ export default class ImageGallery extends Component {
     }
   }
 
-  handleLoadMore = page => {
+  handlerLoadMore = page => {
     this.setState({ page });
   };
 
-  toggleMogal = () => {
+  toggleModal = () => {
     const { isModal } = this.state;
-    this.setState({ idImage: +isModal });
+    this.setState({ isModal: !isModal });
+  };
+
+  findID = event => {
+    const { id } = event.target;
+    this.setState({ idImage: +id });
     this.toggleModal();
   };
 
@@ -89,12 +97,13 @@ export default class ImageGallery extends Component {
   render() {
     const { images, query, page, totalPages, status, error, isModal } =
       this.state;
-    const { handleLoadMore, toggleModal, findID } = this;
+    const { handlerLoadMore, toggleModal, findID } = this;
     const findedImage = this.findImagebyID();
 
     if (status === 'idle') {
       return <StyledSpan>Fill in the input field</StyledSpan>;
     }
+
     if (status === 'pending') {
       return (
         <>
@@ -106,14 +115,14 @@ export default class ImageGallery extends Component {
       );
     }
 
-    if (status === 'resolver') {
+    if (status === 'resolved') {
       return (
         <>
           <StyledUl>
             <ImageGalleryItem images={images} alt={query} onClick={findID} />
           </StyledUl>
           {totalPages !== page ? (
-            <Button onClick={handleLoadMore} page={page} />
+            <Button onClick={handlerLoadMore} page={page} />
           ) : (
             <StyledSpan>
               On request "{query}" all search results are shown
