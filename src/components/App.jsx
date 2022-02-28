@@ -13,7 +13,7 @@ const App = () => {
   return (
     <StyledApp>
       <Searchbar onSubmit={handlerSubmit} />
-      <ImageGallery query={query} />
+      <ImageGallery queryValue={query} />
     </StyledApp>
   );
 };

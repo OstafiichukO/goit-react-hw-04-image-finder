@@ -18,58 +18,52 @@ const STATUS = {
 };
 
 const ImageGallery = ({ queryValue }) => {
-
-  const [query, setQuery] = useState(''),
-  const [page, setPage] = useState(1)
-  const [images, setImages] = useState([])
-  const [totalPages, setTotalPages] = useState(0)
-  const [error, setError] = useState(null)
-  const [status, setStatus] = useState(STATUS.IDLE)
-  const [isModal, setIsModal] = useState(false)
-  const [idImage, setIdImage] = useState('')
-
+  const [query, setQuery] = useState('');
+  const [page, setPage] = useState(1);
+  const [images, setImages] = useState([]);
+  const [totalPages, setTotalPages] = useState(0);
+  const [error, setError] = useState(null);
+  const [status, setStatus] = useState(STATUS.IDLE);
+  const [isModal, setIsModal] = useState(false);
+  const [idImage, setIdImage] = useState('');
 
   useEffect(() => {
     if (query !== queryValue) {
-      const firstPage = 1;
-      
-      setQuery(queryValue),
-        setPage(1),
-        setImages([]),
-        setStatus(STATUS.PENDING),
-      
+      setQuery(queryValue);
+      setPage(1);
+      setImages([]);
+      setStatus(STATUS.PENDING);
 
-        API(queryValue, 1)
-          .then(data => {
-            setImages(data.images),
-              setTotalPages(data.totalPages),
-              setStatus(STATUS.RESOLVED)
-          })
-          .catch(error => {
-            setError(error),
-              setTotalPages(0),
-              setStatus(STATUS.REJECTED)
-          });
+      API(queryValue, 1)
+        .then(data => {
+          setImages(data.images);
+          setTotalPages(data.totalPages);
+          setStatus(STATUS.RESOLVED);
+        })
+        .catch(error => {
+          setError(error);
+          setTotalPages(0);
+          setStatus(STATUS.REJECTED);
+        });
       return;
     }
 
     if (page !== 1) {
-      setPage(page),
-        setStatus(STATUS.PENDING)
+      setPage(page);
+      setStatus(STATUS.PENDING);
 
       API(query, page)
         .then(data => {
-          setImages(prev => [...prev, ...data.images]),
-            setStatus(STATUS.RESOLVED)
+          setImages(prev => [...prev, ...data.images]);
+          setStatus(STATUS.RESOLVED);
         })
         .catch(error => {
-          setError(error),
-            setStatus(STATUS.REJECTED);
+          setError(error);
+          setStatus(STATUS.REJECTED);
         });
       return;
-    };
-
-  }, [query, queryValue, page])
+    }
+  }, [query, queryValue, page]);
 
   const handlerLoadMore = page => {
     setPage(page);
@@ -88,16 +82,13 @@ const ImageGallery = ({ queryValue }) => {
   const findImagebyID = (() => {
     if (idImage) {
       return images.find(image => image.id === idImage);
-    };
+    }
   })();
 
   switch (status) {
-    
     case 'idle':
-      return (
-        <StyledSpan>Fill in the input field</StyledSpan>
-      );
-    
+      return <StyledSpan>Fill in the input field</StyledSpan>;
+
     case 'pending':
       return (
         <>
@@ -107,7 +98,7 @@ const ImageGallery = ({ queryValue }) => {
           <Loader />
         </>
       );
-    
+
     case 'resolved':
       return (
         <>
@@ -128,15 +119,13 @@ const ImageGallery = ({ queryValue }) => {
           )}
         </>
       );
-    
+
     case 'rejected':
-      return (
-        <StyledSpan>{error.message}</StyledSpan>
-      );
-    
+      return <StyledSpan>{error.message}</StyledSpan>;
+
     default:
       return;
-  };
+  }
 };
 
 export default ImageGallery;
