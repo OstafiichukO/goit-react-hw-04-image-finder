@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import API from '../../services/API';
@@ -17,94 +17,88 @@ const STATUS = {
   REJECTED: 'rejected',
 };
 
-export default class ImageGallery extends Component {
-  state = {
-    query: '',
-    page: 1,
-    images: [],
-    totalPages: 0,
-    error: null,
-    status: STATUS.IDLE,
-    isModal: false,
-    idImage: '',
-  };
+const ImageGallery = ({ queryValue }) => {
 
-  componentDidUpdate(prevProps, prevState) {
-    const queryPrev = prevProps.query;
-    const pagePrev = prevState.page;
-    const imagesPrev = prevState.images;
-    const queryNext = this.props.query;
-    const pageNext = this.state.page;
-    const queryPrevEd = queryPrev.replace(/\s+/g, ' ').trim().toLowerCase();
-    const queryNextEd = queryNext.replace(/\s+/g, ' ').trim().toLowerCase();
+  const [query, setQuery] = useState(''),
+  const [page, setPage] = useState(1)
+  const [images, setImages] = useState([])
+  const [totalPages, setTotalPages] = useState(0)
+  const [error, setError] = useState(null)
+  const [status, setStatus] = useState(STATUS.IDLE)
+  const [isModal, setIsModal] = useState(false)
+  const [idImage, setIdImage] = useState('')
 
-    if (queryPrevEd !== queryNextEd) {
+
+  useEffect(() => {
+    if (query !== queryValue) {
       const firstPage = 1;
-      this.setState({
-        query: queryNext,
-        page: firstPage,
-        images: [],
-        status: STATUS.PENDING,
-      });
+      
+      setQuery(queryValue),
+        setPage(1),
+        setImages([]),
+        setStatus(STATUS.PENDING),
+      
 
-      API(queryNext, firstPage)
-        .then(data => {
-          const { images, totalPages } = data;
-          this.setState({ images, totalPages, status: STATUS.RESOLVED });
-        })
-        .catch(error =>
-          this.setState({ error, totalPages: 0, status: STATUS.REJECTED })
-        );
-    }
-
-    if (pagePrev !== pageNext && pageNext !== 1) {
-      this.setState({ page: pageNext, status: STATUS.PENDING });
-
-      API(queryNext, pageNext)
-        .then(data => {
-          const { images } = data;
-          this.setState({
-            images: [...imagesPrev, ...images],
-            status: STATUS.RESOLVED,
+        API(queryValue, 1)
+          .then(data => {
+            setImages(data.images),
+              setTotalPages(data.totalPages),
+              setStatus(STATUS.RESOLVED)
+          })
+          .catch(error => {
+            setError(error),
+              setTotalPages(0),
+              setStatus(STATUS.REJECTED)
           });
-        })
-        .catch(error => this.setState({ error, status: STATUS.REJECTED }));
+      return;
     }
-  }
 
-  handlerLoadMore = page => {
-    this.setState({ page });
+    if (page !== 1) {
+      setPage(page),
+        setStatus(STATUS.PENDING)
+
+      API(query, page)
+        .then(data => {
+          setImages(prev => [...prev, ...data.images]),
+            setStatus(STATUS.RESOLVED)
+        })
+        .catch(error => {
+          setError(error),
+            setStatus(STATUS.REJECTED);
+        });
+      return;
+    };
+
+  }, [query, queryValue, page])
+
+  const handlerLoadMore = page => {
+    setPage(page);
   };
 
-  toggleModal = () => {
-    const { isModal } = this.state;
-    this.setState({ isModal: !isModal });
+  const toggleModal = () => {
+    setIsModal(!isModal);
   };
 
-  findID = event => {
+  const findID = event => {
     const { id } = event.target;
-    this.setState({ idImage: +id });
-    this.toggleModal();
+    setIdImage(+id);
+    toggleModal();
   };
 
-  findImagebyID = () => {
-    const { images, idImage } = this.state;
+  const findImagebyID = (() => {
     if (idImage) {
       return images.find(image => image.id === idImage);
-    }
-  };
+    };
+  })();
 
-  render() {
-    const { images, query, page, totalPages, status, error, isModal } =
-      this.state;
-    const { handlerLoadMore, toggleModal, findID } = this;
-    const findedImage = this.findImagebyID();
-
-    if (status === 'idle') {
-      return <StyledSpan>Fill in the input field</StyledSpan>;
-    }
-
-    if (status === 'pending') {
+  switch (status) {
+    
+    case 'idle':
+      return (
+        <StyledSpan>Fill in the input field</StyledSpan>
+      );
+    
+    case 'pending':
       return (
         <>
           <StyledUl>
@@ -113,9 +107,8 @@ export default class ImageGallery extends Component {
           <Loader />
         </>
       );
-    }
-
-    if (status === 'resolved') {
+    
+    case 'resolved':
       return (
         <>
           <StyledUl>
@@ -130,19 +123,24 @@ export default class ImageGallery extends Component {
           )}
           {isModal && (
             <Modal onClose={toggleModal}>
-              <StyledImg src={findedImage.largeImageURL} alt={query} />
+              <StyledImg src={findImagebyID.largeImageURL} alt={query} />
             </Modal>
           )}
         </>
       );
-    }
+    
+    case 'rejected':
+      return (
+        <StyledSpan>{error.message}</StyledSpan>
+      );
+    
+    default:
+      return;
+  };
+};
 
-    if (status === 'rejected') {
-      return <StyledSpan>{error.message}</StyledSpan>;
-    }
-  }
-}
+export default ImageGallery;
 
 ImageGallery.propTypes = {
-  query: PropTypes.string.isRequired,
+  queryValue: PropTypes.string.isRequired,
 };
